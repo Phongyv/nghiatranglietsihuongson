@@ -39,7 +39,12 @@ export default function Home() {
   const [selectedGrave, setSelectedGrave] = useState<GraveInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({ keyword: '', area: '', row: '', col: '' });
+  const [filters, setFilters] = useState<{
+    keyword?: string;
+    area?: string;
+    row?: string;
+    col?: string;
+  }>({ keyword: '', area: '', row: '', col: '' });
 
   const [listModalOpen, setListModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -73,10 +78,10 @@ export default function Home() {
       filtered = filtered.filter((g) => g.area === filters.area);
     }
     if (filters.row) {
-      filtered = filtered.filter((g) => g.row === parseInt(filters.row));
+      filtered = filtered.filter((g) => g.row === parseInt(filters.row || ''));
     }
     if (filters.col) {
-      filtered = filtered.filter((g) => g.col === parseInt(filters.col));
+      filtered = filtered.filter((g) => g.col === parseInt(filters.col || ''));
     }
 
     setFilteredGraves(filtered);
