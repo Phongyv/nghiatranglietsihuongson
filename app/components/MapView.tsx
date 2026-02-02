@@ -29,7 +29,7 @@ export default function MapView({
     : [];
 
   // Group graves by area (khu)
-  const gravesByArea = graves.reduce((acc, grave) => {
+  const gravesByArea = graves.reduce((acc: Record<string, any[]>, grave) => {
     const area = grave.area || 'Khác';
     if (!acc[area]) {
       acc[area] = [];
@@ -60,7 +60,7 @@ export default function MapView({
             const areaGraves = gravesByArea[area] || [];
             
             // Group by row (hàng)
-            const gravesByRow = areaGraves.reduce((acc, grave) => {
+            const gravesByRow = areaGraves.reduce((acc: Record<number, any[]>, grave) => {
               const row = grave.row || 0;
               if (!acc[row]) {
                 acc[row] = [];
