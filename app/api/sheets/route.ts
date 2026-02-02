@@ -6,29 +6,48 @@ export async function GET() {
     // Kiểm tra biến môi trường
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
     const range = process.env.GOOGLE_SHEETS_RANGE || 'Sheet1!A1:Z1000';
-    const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    
+    // Try to get from GOOGLE_SERVICE_ACCOUNT first
+    let credentials;
+    const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT;
+    
+    if (serviceAccountJson) {
+      credentials = JSON.parse(serviceAccountJson);
+    } else {
+      // Fall back to individual env vars
+      const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    if (!spreadsheetId || !serviceAccountEmail || !privateKey) {
+      if (!spreadsheetId || !serviceAccountEmail || !privateKey) {
+        return NextResponse.json(
+          { 
+            error: 'Thiếu thông tin cấu hình Google Sheets. Vui lòng kiểm tra file .env.local',
+            missing: {
+              spreadsheetId: !spreadsheetId,
+              serviceAccountEmail: !serviceAccountEmail,
+              privateKey: !privateKey
+            }
+          },
+          { status: 500 }
+        );
+      }
+
+      credentials = {
+        client_email: serviceAccountEmail,
+        private_key: privateKey.replace(/\\n/g, '\n'),
+      };
+    }
+
+    if (!spreadsheetId) {
       return NextResponse.json(
-        { 
-          error: 'Thiếu thông tin cấu hình Google Sheets. Vui lòng kiểm tra file .env.local',
-          missing: {
-            spreadsheetId: !spreadsheetId,
-            serviceAccountEmail: !serviceAccountEmail,
-            privateKey: !privateKey
-          }
-        },
+        { error: 'Thiếu GOOGLE_SHEETS_SPREADSHEET_ID' },
         { status: 500 }
       );
     }
 
     // Tạo Google Sheets client với Service Account
     const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: serviceAccountEmail,
-        private_key: privateKey.replace(/\\n/g, '\n'),
-      },
+      credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     });
 

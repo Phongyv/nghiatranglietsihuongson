@@ -25,9 +25,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Read service account from JSON file
-    const serviceAccountPath = path.join(process.cwd(), 'tuvitarotbyyou-204f811739ed.json');
-    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+    // Read service account from environment variable or JSON file
+    let serviceAccount;
+    const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT;
+    
+    if (serviceAccountJson) {
+      serviceAccount = JSON.parse(serviceAccountJson);
+    } else {
+      const serviceAccountPath = path.join(process.cwd(), 'tuvitarotbyyou-204f811739ed.json');
+      serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+    }
 
     const auth = new google.auth.GoogleAuth({
       credentials: serviceAccount,
