@@ -43,56 +43,53 @@ export async function GET(request: NextRequest) {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Fetch graves from the specific village sheet
-    const sheetsResponse = await sheets.spreadsheets.values.get({
+    // Fetch area configuration from "Danh Sách Thôn" sheet
+    // A: Thôn (Village name)
+    // B: Khu (Area: A, B, C, D)
+    // C: Số hàng (Number of rows)
+    // D: Số dãy (Number of columns)
+    const areasResponse = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${villageId}!A1:J1000`,
+      range: `Danh Sách Thôn!A2:D1000`, // Đọc từ dòng 2 trở đi (bỏ header)
     });
 
-    const rows = sheetsResponse.data.values;
+    const rows = areasResponse.data.values;
 
     if (!rows || rows.length === 0) {
       return NextResponse.json({
         data: [],
-        message: 'Không có dữ liệu ô mộ',
+        message: 'Không có dữ liệu cấu hình khu',
       });
     }
 
-    // Expected columns: Khu, Hàng số, Mộ số, Tên sĩ, Ngày sinh, Quê quán, Chức vụ, Ngày nhập ngũ, Ngày hy sinh, Nơi hy sinh
-    const data = rows
-      .slice(1) // Skip header row
-      .filter((row) => row[3]) // Filter rows with name (column D)
-      .map((row, index) => {
+    // Filter rows for this village and parse area configuration
+    const areas = rows
+      .filter((row) => row[0] && row[0].toLowerCase().trim() === villageId.toLowerCase().trim()) // Filter by village
+      .filter((row) => row[1]) // Filter rows with area name
+      .map((row) => {
         return {
-          id: `${villageId}-${index}`,
-          villageId: villageId,
-          name: row[3] || 'Chưa xác định',
-          birthYear: row[4] || '',
-          hometown: row[5] || '',
-          position: row[6] || '',
-          enlistmentDate: row[7] || '',
-          deathDate: row[8] || '',
-          deathPlace: row[9] || '',
-          area: row[0] || '',
-          row: parseInt(row[1]) || 0,
-          col: parseInt(row[2]) || 0,
+          area: row[1] || '', // Tên khu: A, B, C, D
+          rows: parseInt(row[2]) || 0, // Số hàng
+          cols: parseInt(row[3]) || 0, // Số dãy
+          totalGraves: (parseInt(row[2]) || 0) * (parseInt(row[3]) || 0),
         };
       });
 
     const response = NextResponse.json({
       success: true,
-      count: data.length,
-      data,
+      count: areas.length,
+      data: areas,
+      villageId,
     });
     
     // Tắt cache để cập nhật realtime
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     return response;
   } catch (error: any) {
-    console.error('Error fetching graves:', error);
+    console.error('Error fetching areas:', error);
     return NextResponse.json(
       {
-        error: 'Lỗi khi lấy dữ liệu ô mộ',
+        error: 'Lỗi khi lấy dữ liệu cấu hình khu',
         details: error.message,
       },
       { status: 500 }

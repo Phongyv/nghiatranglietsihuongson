@@ -16,6 +16,13 @@ interface Village {
   numDay: number;
 }
 
+interface AreaConfig {
+  area: string;  // A, B, C, D
+  rows: number;  // Số hàng
+  cols: number;  // Số dãy
+  totalGraves: number;
+}
+
 interface GraveInfo {
   id: string;
   villageId: string;
@@ -37,6 +44,7 @@ export default function Home() {
   const [graves, setGraves] = useState<GraveInfo[]>([]);
   const [filteredGraves, setFilteredGraves] = useState<GraveInfo[]>([]);
   const [selectedGrave, setSelectedGrave] = useState<GraveInfo | null>(null);
+  const [areas, setAreas] = useState<AreaConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<{
@@ -53,10 +61,11 @@ export default function Home() {
     fetchVillages();
   }, []);
 
-  // Fetch graves when village is selected
+  // Fetch graves and areas when village is selected
   useEffect(() => {
     if (selectedVillage) {
       fetchGraves(selectedVillage.id);
+      fetchAreas(selectedVillage.id);
     }
   }, [selectedVillage]);
 
@@ -118,6 +127,23 @@ export default function Home() {
       }
     } catch (err) {
       setError('Lỗi khi tải dữ liệu ô mộ');
+    }
+  };
+
+  const fetchAreas = async (villageId: string) => {
+    try {
+      const response = await fetch(`/api/areas?villageId=${villageId}`);
+      const data = await response.json();
+
+      if (data.error) {
+        console.error('Error fetching areas:', data.error);
+        setAreas([]);
+      } else {
+        setAreas(data.data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching areas:', err);
+      setAreas([]);
     }
   };
 
@@ -199,11 +225,7 @@ export default function Home() {
               graves={filteredGraves}
               onSelectGrave={setSelectedGrave}
               villageId={selectedVillage?.id || ''}
-              villageMetadata={{
-                numKhu: selectedVillage?.numKhu || 0,
-                numHang: selectedVillage?.numHang || 0,
-                numDay: selectedVillage?.numDay || 0,
-              }}
+              areas={areas}
             />
           </div>
         </div>

@@ -38,42 +38,19 @@ export async function GET() {
     const sheetsMeta = await sheets.spreadsheets.get({ spreadsheetId });
     const sheetTitles = (sheetsMeta.data.sheets || [])
       .map((s) => s.properties?.title)
-      .filter((title): title is string => Boolean(title));
+      .filter((title): title is string => Boolean(title))
+      .filter((title) => title !== 'Danh Sách Thôn');
 
-    // For each sheet, read K2:M2 (Số khu, Số hàng, Số dãy)
-    const villages = await Promise.all(
-      sheetTitles.map(async (title) => {
-        try {
-          const metaResponse = await sheets.spreadsheets.values.get({
-            spreadsheetId,
-            range: `${title}!K2:M2`,
-          });
-
-          const values = metaResponse.data.values?.[0] || [];
-          const numKhu = parseInt(values[0]) || 0;
-          const numHang = parseInt(values[1]) || 0;
-          const numDay = parseInt(values[2]) || 0;
-
-          return {
-            id: title,
-            name: title,
-            numKhu,
-            numHang,
-            numDay,
-            totalGraves: numKhu * numHang * numDay,
-          };
-        } catch {
-          return {
-            id: title,
-            name: title,
-            numKhu: 0,
-            numHang: 0,
-            numDay: 0,
-            totalGraves: 0,
-          };
-        }
-      })
-    );
+    const villages = sheetTitles.map((title) => {
+      return {
+        id: title,
+        name: title,
+        numKhu: 0,
+        numHang: 0,
+        numDay: 0,
+        totalGraves: 0,
+      };
+    });
 
     const response = NextResponse.json({
       success: true,

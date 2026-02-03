@@ -1,33 +1,24 @@
 
+interface AreaConfig {
+  area: string;  // A, B, C, D
+  rows: number;  // Số hàng
+  cols: number;  // Số dãy
+  totalGraves: number;
+}
+
 interface MapViewProps {
   graves: any[];
   onSelectGrave: (grave: any) => void;
   villageId: string;
-  villageMetadata?: {
-    numKhu: number;
-    numHang: number;
-    numDay: number;
-  };
+  areas?: AreaConfig[];
 }
 
 export default function MapView({
   graves,
   onSelectGrave,
   villageId,
-  villageMetadata,
+  areas = [],
 }: MapViewProps) {
-  // Generate area labels (A, B, C, D, ...)
-  const generateAreaLabels = (numKhu: number): string[] => {
-    return Array.from({ length: numKhu }, (_, i) =>
-      String.fromCharCode(65 + i) // A = 65
-    );
-  };
-
-  // Get area labels from metadata or from graves
-  const areaLabels = villageMetadata
-    ? generateAreaLabels(villageMetadata.numKhu)
-    : [];
-
   // Group graves by area (khu)
   const gravesByArea = graves.reduce((acc: Record<string, any[]>, grave) => {
     const area = grave.area || 'Khác';
@@ -38,8 +29,16 @@ export default function MapView({
     return acc;
   }, {} as Record<string, any[]>);
 
-  // Use metadata areas if available, otherwise use actual grave areas
-  const areas = villageMetadata ? areaLabels : Object.keys(gravesByArea).sort();
+  // Create area config map for quick lookup
+  const areaConfigMap = new Map<string, AreaConfig>();
+  areas.forEach(config => {
+    areaConfigMap.set(config.area, config);
+  });
+
+  // Use areas from config if available, otherwise use actual grave areas
+  const displayAreas = areas.length > 0 
+    ? areas.map(a => a.area).sort() 
+    : Object.keys(gravesByArea).sort();
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
@@ -54,10 +53,11 @@ export default function MapView({
         }
       `}</style>
 
-      {areas.length > 0 ? (
+      {displayAreas.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {areas.map((area, areaIndex) => {
-            const areaGraves = gravesByArea[area] || [];
+          {displayAreas.map((areaName, areaIndex) => {
+            const areaGraves = gravesByArea[areaName] || [];
+            const areaConfig = areaConfigMap.get(areaName);
             
             // Group by row (hàng)
             const gravesByRow = areaGraves.reduce((acc: Record<number, any[]>, grave) => {
@@ -69,19 +69,20 @@ export default function MapView({
               return acc;
             }, {} as Record<number, any[]>);
 
-            // Generate rows based on metadata
+            // Generate rows based on area config
             let rows: number[] = [];
-            if (villageMetadata && villageMetadata.numHang > 0) {
-              rows = Array.from({ length: villageMetadata.numHang }, (_, i) => i + 1);
+            if (areaConfig && areaConfig.rows > 0) {
+              rows = Array.from({ length: areaConfig.rows }, (_, i) => i + 1);
             } else {
               rows = Object.keys(gravesByRow)
                 .map(Number)
+                .filter(n => n > 0)
                 .sort((a, b) => a - b);
             }
 
             return (
               <div 
-                key={area} 
+                key={areaName} 
                 className="rounded-lg p-4 bg-white"
                 style={{
                   animation: 'fadeIn 0.6s ease-out',
@@ -89,13 +90,18 @@ export default function MapView({
                   animationFillMode: 'both',
                 }}
               >
+                {/* Area Title */}
+                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                  Khu {areaName}
+                </h3>
+
                 {/* Rows */}
                 <div className="space-y-4">
                   {rows.map((rowNum, rowIndex) => {
                     const rowGraves = gravesByRow[rowNum] || [];
                     
                     // Determine number of columns for this row
-                    let numCols = villageMetadata ? villageMetadata.numDay : 0;
+                    let numCols = areaConfig ? areaConfig.cols : 0;
                     if (numCols === 0 && rowGraves.length > 0) {
                       numCols = Math.max(...rowGraves.map((g) => g.col || 0));
                     }
@@ -107,7 +113,7 @@ export default function MapView({
                     });
 
                     return (
-                      <div key={`${area}-row-${rowNum}`}>
+                      <div key={`${areaName}-row-${rowNum}`}>
                         {/* Graves in row - Dynamic grid based on columns */}
                         <div
                           className="grid gap-2"
@@ -121,7 +127,7 @@ export default function MapView({
                             if (grave && grave.name) {
                               return (
                                 <button
-                                  key={`${area}-${rowNum}-${colNum}`}
+                                  key={`${areaName}-${rowNum}-${colNum}`}
                                   onClick={() => onSelectGrave(grave)}
                                   className="bg-green-700 hover:bg-green-800 hover:shadow-md transition-all duration-200 border border-green-600 p-2 cursor-pointer text-center h-32 flex flex-col justify-center items-center"
                                   style={{
@@ -142,11 +148,11 @@ export default function MapView({
                               // Empty grave slot - also clickable
                               return (
                                 <button
-                                  key={`${area}-${rowNum}-${colNum}-empty`}
+                                  key={`${areaName}-${rowNum}-${colNum}-empty`}
                                   onClick={() => 
                                     onSelectGrave({
-                                      id: `${area}-${rowNum}-${colNum}`,
-                                      area,
+                                      id: `${areaName}-${rowNum}-${colNum}`,
+                                      area: areaName,
                                       row: rowNum,
                                       col: colNum,
                                       villageId,
