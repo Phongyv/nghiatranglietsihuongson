@@ -41,7 +41,7 @@ export default function MapView({
     : Object.keys(gravesByArea).sort();
 
   return (
-    <div className="bg-white rounded-lg shadow-xl p-8">
+    <div className="bg-white rounded-lg shadow-xl p-2 sm:p-4 md:p-8">
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; }
@@ -54,7 +54,7 @@ export default function MapView({
       `}</style>
 
       {displayAreas.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6">
           {displayAreas.map((areaName, areaIndex) => {
             const areaGraves = gravesByArea[areaName] || [];
             const areaConfig = areaConfigMap.get(areaName);
@@ -83,20 +83,15 @@ export default function MapView({
             return (
               <div 
                 key={areaName} 
-                className="rounded-lg p-4 bg-white"
+                className="rounded-lg p-2 sm:p-3 md:p-4 bg-white"
                 style={{
                   animation: 'fadeIn 0.6s ease-out',
                   animationDelay: `${areaIndex * 0.1}s`,
                   animationFillMode: 'both',
                 }}
               >
-                {/* Area Title */}
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                  Khu {areaName}
-                </h3>
-
                 {/* Rows */}
-                <div className="space-y-4">
+                <div className="space-y-1 sm:space-y-2 md:space-y-4">
                   {rows.map((rowNum, rowIndex) => {
                     const rowGraves = gravesByRow[rowNum] || [];
                     
@@ -116,7 +111,7 @@ export default function MapView({
                       <div key={`${areaName}-row-${rowNum}`}>
                         {/* Graves in row - Dynamic grid based on columns */}
                         <div
-                          className="grid gap-2"
+                          className="grid gap-1 sm:gap-1.5 md:gap-2"
                           style={{
                             gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
                           }}
@@ -129,17 +124,17 @@ export default function MapView({
                                 <button
                                   key={`${areaName}-${rowNum}-${colNum}`}
                                   onClick={() => onSelectGrave(grave)}
-                                  className="bg-green-700 hover:bg-green-800 hover:shadow-md transition-all duration-200 border border-green-600 p-2 cursor-pointer text-center h-32 flex flex-col justify-center items-center"
+                                  className="bg-green-700 hover:bg-green-800 hover:shadow-md transition-all duration-200 border border-green-600 p-1 sm:p-1.5 md:p-2 cursor-pointer text-center h-16 sm:h-20 md:h-32 flex flex-col justify-center items-center"
                                   style={{
                                     animation: 'scaleIn 0.5s ease-out',
                                     animationDelay: `${0.3 + areaIndex * 0.1 + (rowIndex * numCols + colIndex) * 0.03}s`,
                                     animationFillMode: 'both',
                                   }}
                                 >
-                                  <div className="text-xs font-bold text-white leading-snug break-words">
+                                  <div className="text-[8px] sm:text-[10px] md:text-xs font-bold text-white leading-tight break-words overflow-hidden">
                                     {grave.name}
                                   </div>
-                                  <div className="text-[10px] text-gray-100 mt-1">
+                                  <div className="text-[6px] sm:text-[8px] md:text-[10px] text-gray-100 mt-0.5">
                                     {grave.birthYear && <div>{grave.birthYear}</div>}
                                   </div>
                                 </button>
@@ -159,7 +154,7 @@ export default function MapView({
                                       name: '',
                                     })
                                   }
-                                  className="bg-green-100 border border-dashed border-green-300 p-2 h-32 hover:bg-green-200 transition-colors"
+                                  className="bg-green-100 border border-dashed border-green-300 p-1 h-16 sm:h-20 md:h-32 hover:bg-green-200 transition-colors"
                                   style={{
                                     animation: 'scaleIn 0.5s ease-out',
                                     animationDelay: `${0.3 + areaIndex * 0.1 + (rowIndex * numCols + colIndex) * 0.03}s`,

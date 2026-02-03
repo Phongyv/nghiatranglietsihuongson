@@ -7,6 +7,51 @@ import MapView from './components/MapView';
 import VillageList from './components/VillageList';
 
 import SidebarModal from './components/SidebarModal';
+
+// Cache Manager with localStorage and expiry
+const CacheManager = {
+  set: (key: string, data: any, expiryMinutes: number) => {
+    try {
+      const item = {
+        data,
+        timestamp: Date.now(),
+        expiry: expiryMinutes * 60 * 1000, // Convert to milliseconds
+      };
+      localStorage.setItem(key, JSON.stringify(item));
+    } catch (err) {
+      console.error('Cache set error:', err);
+    }
+  },
+  
+  get: (key: string) => {
+    try {
+      const itemStr = localStorage.getItem(key);
+      if (!itemStr) return null;
+      
+      const item = JSON.parse(itemStr);
+      const now = Date.now();
+      
+      // Check if expired
+      if (now - item.timestamp > item.expiry) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      
+      return item.data;
+    } catch (err) {
+      console.error('Cache get error:', err);
+      return null;
+    }
+  },
+  
+  clear: (key: string) => {
+    try {
+      localStorage.removeItem(key);
+    } catch (err) {
+      console.error('Cache clear error:', err);
+    }
+  },
+};
 interface Village {
   id: string;
   name: string;
@@ -56,6 +101,8 @@ export default function Home() {
 
   const [listModalOpen, setListModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // Fetch villages on mount
   useEffect(() => {
     fetchVillages();
@@ -97,6 +144,15 @@ export default function Home() {
   }, [graves, filters]);
 
   const fetchVillages = async () => {
+    // Check cache first (10 minutes)
+    const cacheKey = 'villages';
+    const cachedData = CacheManager.get(cacheKey);
+    if (cachedData) {
+      setVillages(cachedData);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -106,7 +162,9 @@ export default function Home() {
       if (data.error) {
         setError(data.error);
       } else {
-        setVillages(data.data || []);
+        const villagesData = data.data || [];
+        setVillages(villagesData);
+        CacheManager.set(cacheKey, villagesData, 10); // Cache for 10 minutes
       }
     } catch (err) {
       setError('Lỗi khi tải danh sách thôn');
@@ -116,6 +174,14 @@ export default function Home() {
   };
 
   const fetchGraves = async (villageId: string) => {
+    // Check cache first (5 minutes)
+    const cacheKey = `graves_${villageId}`;
+    const cachedData = CacheManager.get(cacheKey);
+    if (cachedData) {
+      setGraves(cachedData);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/graves?villageId=${villageId}`);
       const data = await response.json();
@@ -123,7 +189,9 @@ export default function Home() {
       if (data.error) {
         setError(data.error);
       } else {
-        setGraves(data.data || []);
+        const gravesData = data.data || [];
+        setGraves(gravesData);
+        CacheManager.set(cacheKey, gravesData, 5); // Cache for 5 minutes
       }
     } catch (err) {
       setError('Lỗi khi tải dữ liệu ô mộ');
@@ -131,6 +199,14 @@ export default function Home() {
   };
 
   const fetchAreas = async (villageId: string) => {
+    // Check cache first (5 minutes)
+    const cacheKey = `areas_${villageId}`;
+    const cachedData = CacheManager.get(cacheKey);
+    if (cachedData) {
+      setAreas(cachedData);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/areas?villageId=${villageId}`);
       const data = await response.json();
@@ -139,7 +215,9 @@ export default function Home() {
         console.error('Error fetching areas:', data.error);
         setAreas([]);
       } else {
-        setAreas(data.data || []);
+        const areasData = data.data || [];
+        setAreas(areasData);
+        CacheManager.set(cacheKey, areasData, 5); // Cache for 5 minutes
       }
     } catch (err) {
       console.error('Error fetching areas:', err);
@@ -195,6 +273,7 @@ export default function Home() {
       <Header
         onListClick={() => setListModalOpen(true)}
         onSearchClick={() => setSearchModalOpen(true)}
+        onMenuClick={() => setMobileMenuOpen(true)}
       />
 
       {/* Main Content */}
@@ -262,6 +341,77 @@ export default function Home() {
         onFilterChange={setFilters}
         mode="search"
       />
+
+      {/* Mobile Menu Modal */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 sm:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          
+          {/* Sidebar */}
+          <div 
+            className="absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform transition-transform duration-300 ease-out"
+            style={{
+              animation: 'slideInRight 0.3s ease-out',
+            }}
+          >
+            <style>{`
+              @keyframes slideInRight {
+                from {
+                  transform: translateX(100%);
+                }
+                to {
+                  transform: translateX(0);
+                }
+              }
+            `}</style>
+            
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-green-800 text-white">
+              <h3 className="text-lg font-bold">Menu</h3>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 hover:bg-green-700 rounded transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Menu Items */}
+            <div className="p-4 space-y-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setListModalOpen(true);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors text-left"
+              >
+                <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <span className="text-gray-900 font-medium">Danh sách</span>
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setSearchModalOpen(true);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors text-left"
+              >
+                <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-gray-900 font-medium">Tìm kiếm</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
