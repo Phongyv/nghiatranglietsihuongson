@@ -29,9 +29,9 @@ export default function GravesList({
 
       {/* Grid of Graves */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 sm:px-6 py-4 sm:py-6">
+        <div className="px-2 sm:px-6 py-3 sm:py-6">
           {graves.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {graves.map((grave, index) => (
                 <button
                   key={grave.id}
