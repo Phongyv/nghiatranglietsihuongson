@@ -31,12 +31,12 @@ export default function GravesList({
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 sm:px-6 py-4 sm:py-6">
           {graves.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
               {graves.map((grave, index) => (
                 <button
                   key={grave.id}
                   onClick={() => onSelectGrave(grave)}
-                  className="bg-white rounded-lg border-2 border-blue-400 hover:shadow-lg hover:scale-105 transition-all duration-200 overflow-hidden h-28 sm:h-32 flex flex-col cursor-pointer group hover:border-blue-600"
+                  className="bg-white rounded-lg border-2 border-blue-400 hover:shadow-lg hover:scale-105 transition-all duration-200 overflow-hidden h-36 sm:h-32 flex flex-col cursor-pointer group hover:border-blue-600"
                   style={{
                     animation: 'slideUp 0.6s ease-out',
                     animationDelay: `${index * 0.05}s`,
@@ -44,27 +44,27 @@ export default function GravesList({
                   }}
                 >
                   {/* Card Header */}
-                  <div className="bg-blue-100 px-2 sm:px-3 py-1.5 sm:py-2 flex-shrink-0">
-                    <div className="text-[10px] sm:text-xs font-semibold text-gray-700 line-clamp-2">
+                  <div className="bg-blue-100 px-2.5 sm:px-3 py-2 sm:py-2 flex-shrink-0">
+                    <div className="text-[11px] sm:text-xs font-semibold text-gray-700 line-clamp-1">
                       Khu {grave.area || '-'} - Hàng {grave.row || '-'} - Mộ {grave.col || '-'}
                     </div>
                   </div>
 
                   {/* Card Content */}
-                  <div className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 overflow-hidden flex flex-col justify-between">
+                  <div className="flex-1 px-2.5 sm:px-3 py-2 sm:py-2 overflow-hidden flex flex-col justify-between">
                     <div className="min-h-0">
-                      <div className="text-xs sm:text-sm font-bold text-gray-900 truncate group-hover:text-blue-800">
+                      <div className="text-xs sm:text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-blue-800">
                         {grave.name}
                       </div>
                       {grave.birthYear && (
-                        <div className="text-[10px] sm:text-xs text-gray-600 mt-0.5 line-clamp-1">
+                        <div className="text-[11px] sm:text-xs text-gray-600 mt-1 line-clamp-1">
                           Sinh: {grave.birthYear}
                         </div>
                       )}
                     </div>
 
                     {grave.deathDate && (
-                      <div className="text-[10px] sm:text-xs text-green-700 font-semibold truncate">
+                      <div className="text-[11px] sm:text-xs text-green-700 font-semibold truncate mt-1">
                         Mất: {grave.deathDate}
                       </div>
                     )}

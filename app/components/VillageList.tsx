@@ -128,7 +128,7 @@ export default function VillageList({
                   <button
                     key={village.id}
                     onClick={() => onSelectVillage(village)}
-                    className="w-full px-6 sm:px-8 py-2 sm:py-3 rounded-lg bg-white text-green-800 font-semibold shadow-md hover:bg-green-50 hover:shadow-lg hover:scale-105 transition-all"
+                    className="w-full px-3 sm:px-8 py-3 sm:py-3 rounded-lg bg-white text-green-800 font-semibold shadow-md hover:bg-green-50 hover:shadow-lg hover:scale-105 transition-all text-sm sm:text-base leading-tight"
                     style={{
                       animation: 'scaleIn 0.5s ease-out',
                       animationDelay: `${0.5 + index * 0.08}s`,
