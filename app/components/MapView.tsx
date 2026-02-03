@@ -154,7 +154,7 @@ export default function MapView({
                                       name: '',
                                     })
                                   }
-                                  className="bg-green-100 border border-dashed border-green-300 p-1 h-16 sm:h-20 md:h-32 hover:bg-green-200 transition-colors"
+                                  className="bg-green-100 border border-green-300 p-1 h-16 sm:h-20 md:h-32 hover:bg-green-200 transition-colors"
                                   style={{
                                     animation: 'scaleIn 0.5s ease-out',
                                     animationDelay: `${0.3 + areaIndex * 0.1 + (rowIndex * numCols + colIndex) * 0.03}s`,
