@@ -164,7 +164,7 @@ export default function Home() {
       } else {
         const villagesData = data.data || [];
         setVillages(villagesData);
-        CacheManager.set(cacheKey, villagesData, 10); // Cache for 10 minutes
+        CacheManager.set(cacheKey, villagesData, 0); // Cache disabled - 0 minutes
       }
     } catch (err) {
       setError('Lỗi khi tải danh sách thôn');
@@ -191,7 +191,7 @@ export default function Home() {
       } else {
         const gravesData = data.data || [];
         setGraves(gravesData);
-        CacheManager.set(cacheKey, gravesData, 5); // Cache for 5 minutes
+        CacheManager.set(cacheKey, gravesData, 0); // Cache disabled - 0 minutes
       }
     } catch (err) {
       setError('Lỗi khi tải dữ liệu ô mộ');
@@ -217,7 +217,7 @@ export default function Home() {
       } else {
         const areasData = data.data || [];
         setAreas(areasData);
-        CacheManager.set(cacheKey, areasData, 5); // Cache for 5 minutes
+        CacheManager.set(cacheKey, areasData, 0); // Cache disabled - 0 minutes
       }
     } catch (err) {
       console.error('Error fetching areas:', err);
