@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Nghĩa Trang Liệt Sĩ Xã Hương Sơn" }],
   creator: "Nghĩa Trang Liệt Sĩ Xã Hương Sơn",
   publisher: "Nghĩa Trang Liệt Sĩ Xã Hương Sơn",
-  metadataBase: new URL("https://nghiatranglietsihuongson.vercel.app/" || "http://localhost:3000"),
+  // metadataBase: new URL("https://nghiatranglietsihuongson.vercel.app/" || "http://localhost:3000"),
   openGraph: {
     title: "Nghĩa Trang Liệt Sĩ Xã Hương Sơn",
     description: "Trang thông tin nghĩa trang liệt sĩ xã Hương Sơn",
