@@ -41,7 +41,15 @@ export default function MapView({
     : Object.keys(gravesByArea).sort();
 
   return (
-    <div className="bg-white rounded-lg shadow-xl p-2 sm:p-4 md:p-8">
+    <div
+      className="rounded-lg p-2 sm:p-4 md:p-8 min-h-full"
+      style={{
+        backgroundImage: "url('/assets/elementry-background.jpg')",
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'center',
+      }}
+    >
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; }
@@ -83,7 +91,7 @@ export default function MapView({
             return (
               <div 
                 key={areaName} 
-                className="rounded-lg p-2 sm:p-3 md:p-4 bg-white"
+                className="rounded-lg p-2 sm:p-3 md:p-4"
                 style={{
                   animation: 'fadeIn 0.6s ease-out',
                   animationDelay: `${areaIndex * 0.1}s`,
@@ -91,7 +99,7 @@ export default function MapView({
                 }}
               >
                 {/* Rows */}
-                <div className="space-y-1 sm:space-y-2 md:space-y-4">
+                <div className="space-y-1 sm:space-y-1.5 md:space-y-2">
                   {rows.map((rowNum, rowIndex) => {
                     const rowGraves = gravesByRow[rowNum] || [];
                     
@@ -124,17 +132,18 @@ export default function MapView({
                                 <button
                                   key={`${areaName}-${rowNum}-${colNum}`}
                                   onClick={() => onSelectGrave(grave)}
-                                  className="bg-green-700 hover:bg-green-800 hover:shadow-md transition-all duration-200 border border-green-600 p-1 sm:p-1.5 md:p-2 cursor-pointer text-center h-16 sm:h-20 md:h-32 flex flex-col justify-center items-center"
+                                  className="hover:shadow-md transition-all duration-200 border-2 border-white p-1 sm:p-1.5 md:p-2 cursor-pointer text-center h-14 sm:h-16 md:h-24 flex flex-col justify-center items-center"
                                   style={{
+                                    backgroundColor: '#66A1D1',
                                     animation: 'scaleIn 0.5s ease-out',
                                     animationDelay: `${0.3 + areaIndex * 0.1 + (rowIndex * numCols + colIndex) * 0.03}s`,
                                     animationFillMode: 'both',
                                   }}
                                 >
-                                  <div className="text-[8px] sm:text-[10px] md:text-xs font-bold text-white leading-tight break-words overflow-hidden">
+                                  <div className="text-[8px] sm:text-[10px] md:text-xs font-bold text-black leading-tight break-words overflow-hidden">
                                     {grave.name}
                                   </div>
-                                  <div className="text-[6px] sm:text-[8px] md:text-[10px] text-gray-100 mt-0.5">
+                                  <div className="text-[6px] sm:text-[8px] md:text-[10px] text-black mt-0.5">
                                     {grave.birthYear && <div>{grave.birthYear}</div>}
                                   </div>
                                 </button>
@@ -154,8 +163,9 @@ export default function MapView({
                                       name: '',
                                     })
                                   }
-                                  className="bg-green-100 border border-green-300 p-1 h-16 sm:h-20 md:h-32 hover:bg-green-200 transition-colors"
+                                  className="border-2 border-white p-1 h-14 sm:h-16 md:h-24 transition-colors"
                                   style={{
+                                    backgroundColor: '#66A1D1',
                                     animation: 'scaleIn 0.5s ease-out',
                                     animationDelay: `${0.3 + areaIndex * 0.1 + (rowIndex * numCols + colIndex) * 0.03}s`,
                                     animationFillMode: 'both',

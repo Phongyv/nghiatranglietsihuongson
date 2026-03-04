@@ -10,7 +10,15 @@ export default function GravesList({
   selectedVillage,
 }: GravesListProps) {
   return (
-    <div className="flex-1 overflow-y-auto flex flex-col bg-white">
+    <div
+      className="flex-1 overflow-y-auto flex flex-col"
+      style={{
+        backgroundImage: "url('/assets/elementry-background.jpg')",
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'center',
+      }}
+    >
       <style>{`
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -18,7 +26,7 @@ export default function GravesList({
         }
       `}</style>
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 sm:py-6 z-10">
+      <div className="sticky top-0 border-b border-gray-200 px-4 sm:px-6 py-4 sm:py-6 z-10" style={{ backgroundColor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)' }}>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           {selectedVillage?.name || 'Chọn nghĩa trang'}
         </h1>
@@ -31,44 +39,27 @@ export default function GravesList({
       <div className="flex-1 overflow-y-auto">
         <div className="px-2 sm:px-6 py-3 sm:py-6">
           {graves.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 gap-2 sm:gap-3">
               {graves.map((grave, index) => (
                 <button
                   key={grave.id}
                   onClick={() => onSelectGrave(grave)}
-                  className="bg-white rounded-lg border-2 border-blue-400 hover:shadow-lg hover:scale-105 transition-all duration-200 overflow-hidden h-36 sm:h-32 flex flex-col cursor-pointer group hover:border-blue-600"
+                  className="hover:shadow-lg transition-all duration-200 overflow-hidden h-20 sm:h-24 flex flex-col justify-center items-center cursor-pointer group p-1.5 sm:p-2 border-2 border-white"
                   style={{
+                    backgroundColor: '#66A1D1',
                     animation: 'slideUp 0.6s ease-out',
-                    animationDelay: `${index * 0.05}s`,
+                    animationDelay: `${index * 0.02}s`,
                     animationFillMode: 'both',
                   }}
                 >
-                  {/* Card Header */}
-                  <div className="bg-blue-100 px-2 sm:px-3 py-1 sm:py-2 flex-shrink-0">
-                    <div className="text-[10px] sm:text-xs font-semibold text-gray-700 line-clamp-1">
-                      Khu {grave.area || '-'} - Hàng {grave.row || '-'} - Mộ {grave.col || '-'}
-                    </div>
+                  <div className="text-[10px] sm:text-xs font-bold text-black leading-tight text-center line-clamp-2">
+                    {grave.name}
                   </div>
-
-                  {/* Card Content */}
-                  <div className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 overflow-hidden flex flex-col justify-between gap-0.5">
-                    <div className="flex-shrink-0">
-                      <div className="text-xs sm:text-sm font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-800">
-                        {grave.name}
-                      </div>
-                      {grave.birthYear && (
-                        <div className="text-[10px] sm:text-xs text-gray-600 mt-0.5 line-clamp-1">
-                          Sinh: {grave.birthYear}
-                        </div>
-                      )}
+                  {grave.birthYear && (
+                    <div className="text-[8px] sm:text-[10px] text-black mt-0.5 text-center">
+                      {grave.birthYear}
                     </div>
-
-                    {grave.deathDate && (
-                      <div className="text-[10px] sm:text-xs text-green-700 font-semibold truncate flex-shrink-0">
-                        Mất: {grave.deathDate}
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </button>
               ))}
             </div>

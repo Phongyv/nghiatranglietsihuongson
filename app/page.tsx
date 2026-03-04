@@ -277,29 +277,18 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Map View */}
         <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-200 bg-white flex items-start justify-between gap-4">
-            <button
-              onClick={() => {
-                setSelectedVillage(null);
-                setSelectedGrave(null);
-              }}
-              className="flex items-center gap-2 text-green-800 hover:text-green-900 font-medium text-sm"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Quay lại
-            </button>
-
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-right">
-              {selectedVillage?.name}
-            </h1>
-          </div>
-
-          <div className="flex-1 overflow-auto">
+          <div
+            className="flex-1 overflow-auto"
+            style={{
+              backgroundImage: "url('/assets/elementry-background.jpg')",
+              backgroundSize: 'cover',
+              backgroundAttachment: 'fixed',
+              backgroundPosition: 'center',
+            }}
+          >
             <MapView
               graves={filteredGraves}
               onSelectGrave={setSelectedGrave}
@@ -307,6 +296,28 @@ export default function Home() {
               areas={areas}
             />
           </div>
+        </div>
+
+        {/* Floating Action Buttons - right side */}
+        <div className="absolute right-4 top-4 z-10 flex flex-col gap-2">
+          <button
+            onClick={() => setListModalOpen(true)}
+            className="w-10 h-10 bg-white rounded-lg shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            title="Danh sách"
+          >
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setSearchModalOpen(true)}
+            className="w-10 h-10 bg-white rounded-lg shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+            title="Tìm kiếm"
+          >
+            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
         </div>
       </div>
 
