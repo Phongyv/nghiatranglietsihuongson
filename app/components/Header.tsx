@@ -8,8 +8,10 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick, onListClick, onSearchClick }: HeaderProps) {
   return (
-    <header className="bg-green-800 text-white shadow-md sticky top-0 z-20">
-      <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
+    <header className="bg-green-800 bg-[url('/assets/nav-back.jpg')] bg-cover bg-center text-white shadow-md sticky top-0 z-20">
+      {/* Thêm lớp nền mờ (overlay) đen/xanh mỏng để text dễ đọc hơn trên nền hoa văn */}
+      <div className="bg-black/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
+        
         {/* Left: Logo and Title */}
         <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
           {/* Logos */}
@@ -39,8 +41,12 @@ export default function Header({ onMenuClick, onListClick, onSearchClick }: Head
 
           {/* Title */}
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold truncate">Nghĩa Trang Liệt Sĩ Xã Hương Sơn</h1>
-            <p className="text-xs sm:text-sm text-green-100 hidden sm:block">Công trình số hóa kỷ niệm liệt sỹ</p>
+            <h1 className="text-lg sm:text-2xl font-bold truncate drop-shadow-md">
+              Nghĩa Trang Liệt Sĩ Xã Hương Sơn
+            </h1>
+            <p className="text-xs sm:text-sm text-green-50 hidden sm:block drop-shadow-md">
+              Công trình số hóa kỷ niệm liệt sỹ
+            </p>
           </div>
         </div>
 
@@ -51,4 +57,3 @@ export default function Header({ onMenuClick, onListClick, onSearchClick }: Head
     </header>
   );
 }
-
