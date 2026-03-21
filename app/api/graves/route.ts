@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
           isAutoFilled,
         };
       })
-      .filter((grave) => Boolean(grave))
+      .filter((grave): grave is NonNullable<typeof grave> => grave !== null)
       .filter((grave) => includeHidden || !grave.hidden);
 
     const response = NextResponse.json({
