@@ -140,7 +140,7 @@ export default function MapView({
                                 <button
                                   key={`${areaName}-${rowNum}-${colNum}`}
                                   onClick={() => onSelectGrave(grave)}
-                                  className="hover:shadow-md transition-all duration-200 border-2 border-white p-1 sm:p-1.5 md:p-2 cursor-pointer text-center h-14 sm:h-16 md:h-24 flex flex-col justify-center items-center"
+                                  className="hover:shadow-md transition-all duration-200 border-2 border-white p-0.5 sm:p-1.5 md:p-2 cursor-pointer text-center h-14 sm:h-16 md:h-24 flex flex-col justify-center items-center gap-0.5 sm:gap-0 overflow-hidden"
                                   style={{
                                     backgroundColor: grave.hidden ? '#9CA3AF' : '#66A1D1',
                                     animation: 'scaleIn 0.5s ease-out',
@@ -148,14 +148,21 @@ export default function MapView({
                                     animationFillMode: 'both',
                                   }}
                                 >
-                                  <div className="text-[8px] sm:text-[10px] md:text-xs font-bold text-black leading-tight break-words overflow-hidden">
+                                  <div
+                                    className="text-[5px] sm:text-[10px] md:text-xs font-bold text-black leading-none sm:leading-tight break-words overflow-hidden"
+                                    style={{
+                                      display: '-webkit-box',
+                                      WebkitLineClamp: 3,
+                                      WebkitBoxOrient: 'vertical',
+                                    }}
+                                  >
                                     {displayName}
                                   </div>
-                                  <div className="text-[6px] sm:text-[8px] md:text-[10px] text-black mt-0.5">
+                                  <div className="text-[4px] sm:text-[8px] md:text-[10px] text-black mt-0.5 sm:mt-0 leading-none sm:leading-tight">
                                     {grave.birthYear && <div>{grave.birthYear}</div>}
                                   </div>
                                   {grave.hidden && (
-                                    <div className="text-[6px] sm:text-[8px] md:text-[9px] font-semibold text-white bg-black/40 px-1 py-0.5 rounded mt-0.5">
+                                    <div className="text-[4px] sm:text-[8px] md:text-[9px] font-semibold text-white bg-black/40 px-1 py-0.5 rounded mt-0.5 leading-none">
                                       ĐÃ ẨN
                                     </div>
                                   )}
